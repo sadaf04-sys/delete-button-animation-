@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hold to Delete Button</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { background: rgb(26, 26, 26); }
+    body {
+      font-family: Inter, sans-serif;
+      background: rgb(26, 26, 26);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .mobile-frame {
+      width: 393px;
+      height: 852px;
+      background: rgb(255, 255, 255);
+      border-radius: 40px;
+      border: 12px solid black;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .mobile-frame::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 150px;
+      height: 28px;
+      background: black;
+      border-radius: 0 0 40px 40px;
+      z-index: 10;
+    }
+
+    .container {
+      width: 100%;
+      height: 100%;
+      background: rgb(255, 255, 255);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      position: relative;
+    }
+
+    .header {
+      position: absolute;
+      top: 20px;
+      text-align: center;
+    }
+
+    .header h1 {
+      font-size: 22px;
+      font-weight: 500;
+      color: rgb(10, 10, 10);
+    }
+
+    .button-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Hold to Delete button — 158x45px with 12px padding, 32px radius */
+    .hold-delete-btn {
+      width: 158px;
+      height: 45px;
+      padding: 12px;
+      background: #F0F0F0;
+      border: none;
+      border-radius: 32px;
+      cursor: pointer;
+      font-family: Inter, sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      color: #262626;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Pseudo-element for left-to-right fill — rounded left, square right */
+    .hold-delete-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 0%;
+      height: 100%;
+      background: #F9E9EC;
+      border-radius: 32px 0px 0px 32px;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* Fill animation — width expands from 0% to 100% left to right */
+    .hold-delete-btn.pressed::before {
+      animation: fillWidth 2000ms linear forwards;
+    }
+
+    @keyframes fillWidth {
+      from {
+        width: 0%;
+      }
+      to {
+        width: 100%;
+      }
+    }
+
+    /* Reverse fill animation — width shrinks back to 0% right to left */
+    .hold-delete-btn.released::before {
+      animation: reverseWidth 300ms ease-out forwards;
+    }
+
+    @keyframes reverseWidth {
+      from {
+        width: 100%;
+      }
+      to {
+        width: 0%;
+      }
+    }
+
+    /* Quick tap feedback — 5% scale down */
+    .hold-delete-btn:active {
+      transform: scale(0.95);
+      transition: transform 100ms ease-out;
+    }
+
+    /* Scale back to original size on release */
+    .hold-delete-btn.released {
+      animation: scaleBack 300ms ease-out forwards;
+    }
+
+    @keyframes scaleBack {
+      from {
+        transform: scale(0.95);
+      }
+      to {
+        transform: scale(1);
+      }
+    }
+
+    /* Text and icon color animation */
+    .hold-delete-btn.pressed {
+      animation: changeTextColor 2000ms linear forwards;
+    }
+
+    @keyframes changeTextColor {
+      from {
+        color: #262626;
+      }
+      to {
+        color: #C42742;
+      }
+    }
+
+    .hold-delete-btn svg {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Character styling for progressive color change */
+    .char {
+      position: relative;
+      z-index: 1;
+    }
+
+    @keyframes charColorChange {
+      from {
+        color: #262626;
+      }
+      to {
+        color: #C42742;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="mobile-frame">
+    <div class="container">
+      <div class="header">
+        <h1>Delete</h1>
+      </div>
+
+      <div class="button-wrapper">
+        <button class="hold-delete-btn" id="holdDeleteBtn">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6 19C6 20.1 6.9 21 8 21H16C17.1 21 18 20.1 18 19V7H6V19ZM8 9H16V19H8V9ZM15.5 4L14.5 3H9.5L8.5 4H5V6H19V4H15.5Z" fill="currentColor"/>
+          </svg>
+          <span id="buttonText">Hold to Delete</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const holdDeleteBtn = document.getElementById('holdDeleteBtn');
+    const buttonText = document.getElementById('buttonText');
+    let holdTimer = null;
+    let isHolding = false;
+
+    // Wrap each character in a span for staggered animation
+    const text = buttonText.textContent;
+    buttonText.innerHTML = text
+      .split('')
+      .map((char, index) => {
+        return `<span class="char" style="--char-index: ${index}; --total-chars: ${text.length};">${char}</span>`;
+      })
+      .join('');
+
+    // Start animation immediately when mouse/touch down
+    holdDeleteBtn.addEventListener('mousedown', () => {
+      isHolding = true;
+      holdDeleteBtn.classList.add('pressed');
+
+      // Apply staggered animation to each character
+      const chars = buttonText.querySelectorAll('.char');
+      chars.forEach((char, index) => {
+        const totalChars = chars.length;
+        const delayPercent = (index / totalChars) * 100;
+        char.style.animation = `charColorChange 2000ms linear ${(delayPercent / 100) * 2000}ms forwards`;
+      });
+
+      // Check if held for full 2000ms
+      holdTimer = setTimeout(() => {
+        // Animation completed
+        console.log('Item deleted');
+      }, 2000);
+    });
+
+    // Reset when mouse/touch up or leave
+    const resetButton = () => {
+      isHolding = false;
+      if (holdTimer) {
+        clearTimeout(holdTimer);
+      }
+      holdDeleteBtn.classList.remove('pressed');
+      holdDeleteBtn.classList.add('released');
+
+      // Reset character colors with animation
+      const chars = buttonText.querySelectorAll('.char');
+      chars.forEach(char => {
+        char.style.animation = 'none';
+        char.style.color = '#262626';
+      });
+
+      // Remove released class after animation completes
+      setTimeout(() => {
+        holdDeleteBtn.classList.remove('released');
+      }, 300);
+    };
+
+    holdDeleteBtn.addEventListener('mouseup', resetButton);
+    holdDeleteBtn.addEventListener('mouseleave', resetButton);
+    holdDeleteBtn.addEventListener('touchend', resetButton);
+  </script>
+</body>
+</html>
