@@ -4,57 +4,66 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Hold to Delete Button</title>
+  <!-- Import Inter font family from Google Fonts — used throughout the design -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
+    /* Reset default browser spacing — removes margins/padding from all elements */
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
+    /* Dark background behind the mobile frame — makes the white phone stand out */
     html { background: rgb(26, 26, 26); }
+
+    /* Body styling — creates a centered viewport for the phone frame */
     body {
       font-family: Inter, sans-serif;
       background: rgb(26, 26, 26);
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
+      min-height: 100vh;               /* Full viewport height */
+      display: flex;                   /* Flexbox layout — aligns items in a row */
+      justify-content: center;         /* Center horizontally */
+      align-items: center;             /* Center vertically */
+      padding: 20px;                   /* Space around edges on smaller screens */
     }
 
+    /* Mobile phone frame — simulates an iPhone 14 Pro size (393×852px) */
     .mobile-frame {
       width: 393px;
       height: 852px;
-      background: rgb(255, 255, 255);
-      border-radius: 40px;
-      border: 12px solid black;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-      overflow: hidden;
-      position: relative;
+      background: rgb(255, 255, 255); /* Pure white screen */
+      border-radius: 40px;            /* Rounded corners like a modern phone */
+      border: 12px solid black;       /* Bezel/frame thickness */
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); /* Soft drop shadow for depth */
+      overflow: hidden;               /* Hides content that extends beyond rounded corners */
+      position: relative;             /* Allows positioning of child elements */
     }
 
+    /* Notch simulation — the small black area at the top of the phone (camera area) */
     .mobile-frame::before {
-      content: '';
+      content: '';                    /* Creates an invisible element we can style */
       position: absolute;
       top: 0;
       left: 50%;
-      transform: translateX(-50%);
+      transform: translateX(-50%);    /* Centers the notch horizontally */
       width: 150px;
       height: 28px;
       background: black;
-      border-radius: 0 0 40px 40px;
-      z-index: 10;
+      border-radius: 0 0 40px 40px;  /* Rounded only at the bottom */
+      z-index: 10;                    /* Sits on top of other content */
     }
 
+    /* Container inside the phone — holds the header and button */
     .container {
       width: 100%;
       height: 100%;
-      background: rgb(255, 255, 255);
-      display: flex;
-      flex-direction: column;
+      background: rgb(255, 255, 255); /* White background */
+      display: flex;                  /* Flexbox layout */
+      flex-direction: column;         /* Stack items vertically */
       align-items: center;
       justify-content: center;
       padding: 20px;
-      position: relative;
+      position: relative;             /* Allows absolute positioning of children */
     }
 
+    /* Header section at the top of the screen */
     .header {
       position: absolute;
       top: 20px;
@@ -63,133 +72,164 @@
 
     .header h1 {
       font-size: 22px;
-      font-weight: 500;
-      color: rgb(10, 10, 10);
+      font-weight: 500;               /* Medium weight — not too bold, not too light */
+      color: rgb(10, 10, 10);         /* Almost black, easier on the eyes than pure black */
     }
 
+    /* Wrapper for the button — centers it on screen */
     .button-wrapper {
       display: flex;
       align-items: center;
       justify-content: center;
     }
 
-    /* Hold to Delete button — 158x45px with 12px padding, 32px radius */
+    /* ===== BUTTON STYLING ===== */
+    /* The main button — 158×45 pixels, light grey background */
     .hold-delete-btn {
       width: 158px;
       height: 45px;
-      padding: 12px;
-      background: #F0F0F0;
-      border: none;
-      border-radius: 32px;
-      cursor: pointer;
+      padding: 12px;                  /* Internal spacing around icon + text */
+      background: #F0F0F0;            /* Light grey — neutral, not too bright */
+      border: none;                   /* No border — clean, minimal look */
+      border-radius: 32px;            /* Fully rounded corners like a pill/capsule */
+      cursor: pointer;                /* Changes cursor to hand icon on hover */
       font-family: Inter, sans-serif;
       font-size: 14px;
-      font-weight: 500;
-      color: #262626;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      position: relative;
-      overflow: hidden;
+      font-weight: 500;               /* Medium weight for readability */
+      color: #262626;                 /* Dark grey text */
+      display: flex;                  /* Flexbox — arranges icon + text side by side */
+      align-items: center;            /* Vertically centers icon + text */
+      justify-content: center;        /* Horizontally centers icon + text */
+      gap: 8px;                       /* Space between trash icon and "Hold to Delete" text */
+      position: relative;             /* Allows positioning of the fill layer beneath it */
+      overflow: hidden;               /* Hides the fill when it overflows the rounded corners */
     }
 
-    /* Pseudo-element for left-to-right fill — rounded left, square right */
+    /* ===== FILL ANIMATION ===== */
+    /* The pink "fill" layer — sits behind the text/icon, expands left to right */
     .hold-delete-btn::before {
-      content: '';
+      content: '';                    /* Creates an invisible element we style */
       position: absolute;
       top: 0;
       left: 0;
-      width: 0%;
-      height: 100%;
-      background: #F9E9EC;
+      width: 0%;                      /* Starts at 0% (completely hidden on the left) */
+      height: 100%;                   /* Takes up full button height */
+      background: #F9E9EC;            /* Pink/red color — the "delete" warning color */
+      /* Rounded left corners (32px) — square right corners (0px) */
+      /* This creates a clean edge on the right as the fill expands */
       border-radius: 32px 0px 0px 32px;
-      z-index: 0;
-      pointer-events: none;
+      z-index: 0;                     /* Sits behind the text and icon (z-index 1) */
+      pointer-events: none;           /* Doesn't interfere with button clicks */
     }
 
-    /* Fill animation — width expands from 0% to 100% left to right */
+    /* When button is held (.pressed class), start the fill animation */
     .hold-delete-btn.pressed::before {
+      /* fillWidth animation takes 2000ms (2 seconds) to complete */
+      /* linear timing — progresses at constant speed (no acceleration/deceleration) */
+      /* forwards — ends and stays at 100% width until animation reverses */
       animation: fillWidth 2000ms linear forwards;
     }
 
+    /* Keyframes define the animation — from start to end state */
     @keyframes fillWidth {
       from {
-        width: 0%;
+        width: 0%;                    /* Start: no fill visible (width 0%) */
       }
       to {
-        width: 100%;
+        width: 100%;                  /* End: fill covers entire button (width 100%) */
       }
     }
 
-    /* Reverse fill animation — width shrinks back to 0% right to left */
+    /* When button is released (.released class), reverse the fill animation */
     .hold-delete-btn.released::before {
+      /* reverseWidth animation shrinks the fill back to 0% */
+      /* 300ms — quick snap-back motion */
+      /* ease-out — starts fast, slows down at the end (like braking) */
+      /* forwards — animation ends and stays at final state */
       animation: reverseWidth 300ms ease-out forwards;
     }
 
+    /* Keyframes for the reverse animation — fills back up */
     @keyframes reverseWidth {
       from {
-        width: 100%;
+        width: 100%;                  /* Start: fill covers entire button */
       }
       to {
-        width: 0%;
+        width: 0%;                    /* End: fill disappears (width 0%) */
       }
     }
 
-    /* Quick tap feedback — 5% scale down */
+    /* ===== TAP FEEDBACK ===== */
+    /* When button is actively being pressed (:active state) */
     .hold-delete-btn:active {
+      /* Scale down to 95% (5% reduction) — makes button feel "pressed in" */
       transform: scale(0.95);
+      /* Transition takes 100ms with ease-out — quick, snappy feedback */
       transition: transform 100ms ease-out;
     }
 
-    /* Scale back to original size on release */
+    /* When button is released (.released class) — scale back to normal */
     .hold-delete-btn.released {
+      /* scaleBack animation returns button to 100% size */
+      /* 300ms — matches the fill reverse animation duration */
+      /* ease-out — smooth deceleration */
+      /* forwards — stays at 100% size */
       animation: scaleBack 300ms ease-out forwards;
     }
 
+    /* Keyframes for scale-back animation */
     @keyframes scaleBack {
       from {
-        transform: scale(0.95);
+        transform: scale(0.95);       /* Start: button is still pressed down (95% size) */
       }
       to {
-        transform: scale(1);
+        transform: scale(1);          /* End: button returns to normal size (100%) */
       }
     }
 
-    /* Text and icon color animation */
+    /* ===== TEXT COLOR ANIMATION ===== */
+    /* When button is held (.pressed class), start text color animation */
     .hold-delete-btn.pressed {
+      /* changeTextColor animation — changes text from dark grey to red */
+      /* 2000ms — matches the fill animation duration */
+      /* linear timing — color changes at constant rate */
+      /* forwards — color stays red until button is released */
       animation: changeTextColor 2000ms linear forwards;
     }
 
+    /* Keyframes for text color change — animates color from grey to red */
     @keyframes changeTextColor {
       from {
-        color: #262626;
+        color: #262626;               /* Start: dark grey (original color) */
       }
       to {
-        color: #C42742;
+        color: #C42742;               /* End: red (warning/delete color) */
       }
     }
 
+    /* SVG icon (trash can) styling */
     .hold-delete-btn svg {
       width: 20px;
       height: 20px;
-      flex-shrink: 0;
+      flex-shrink: 0;                 /* Prevents icon from shrinking */
       position: relative;
-      z-index: 1;
+      z-index: 1;                     /* Sits on top of the fill (z-index 0) */
     }
 
-    /* Character styling for progressive color change */
+    /* ===== CHARACTER ANIMATION ===== */
+    /* Each letter/character in "Hold to Delete" gets wrapped in a <span class="char"> */
     .char {
       position: relative;
-      z-index: 1;
+      z-index: 1;                     /* Sits on top of the pink fill */
     }
 
+    /* Keyframes for individual character color change */
     @keyframes charColorChange {
       from {
-        color: #262626;
+        color: #262626;               /* Start: dark grey */
       }
       to {
-        color: #C42742;
+        color: #C42742;               /* End: red */
       }
     }
   </style>
@@ -213,65 +253,88 @@
   </div>
 
   <script>
-    const holdDeleteBtn = document.getElementById('holdDeleteBtn');
-    const buttonText = document.getElementById('buttonText');
-    let holdTimer = null;
-    let isHolding = false;
+    /* ===== JAVASCRIPT — INTERACTIVITY ===== */
+    /* This JavaScript file handles all the interactive behavior of the button */
 
-    // Wrap each character in a span for staggered animation
-    const text = buttonText.textContent;
+    /* Get references to HTML elements we need to control */
+    const holdDeleteBtn = document.getElementById('holdDeleteBtn'); /* The button itself */
+    const buttonText = document.getElementById('buttonText');       /* The "Hold to Delete" text */
+    let holdTimer = null;                                           /* Timer that tracks 2000ms hold */
+    let isHolding = false;                                          /* Boolean flag for holding state */
+
+    /* ===== WRAP TEXT INTO INDIVIDUAL CHARACTERS ===== */
+    /* This section breaks "Hold to Delete" into individual letters for animation */
+    /* Example: "Hold" becomes <span class="char">H</span><span class="char">o</span>... etc */
+    const text = buttonText.textContent;  /* Get the original text */
     buttonText.innerHTML = text
-      .split('')
-      .map((char, index) => {
+      .split('')                          /* Split text into array: ["H", "o", "l", "d", ...] */
+      .map((char, index) => {             /* Loop through each character with its position (index) */
+        /* Create a span for each character with custom data attributes */
         return `<span class="char" style="--char-index: ${index}; --total-chars: ${text.length};">${char}</span>`;
       })
-      .join('');
+      .join('');                          /* Join all spans back into HTML string */
 
-    // Start animation immediately when mouse/touch down
+    /* ===== MOUSEDOWN EVENT — BUTTON PRESSED ===== */
+    /* This runs when user presses the button (mouse down or touch start) */
     holdDeleteBtn.addEventListener('mousedown', () => {
-      isHolding = true;
-      holdDeleteBtn.classList.add('pressed');
+      isHolding = true;                   /* Set holding flag to true */
+      holdDeleteBtn.classList.add('pressed'); /* Add .pressed class → triggers fill animation in CSS */
 
-      // Apply staggered animation to each character
-      const chars = buttonText.querySelectorAll('.char');
-      chars.forEach((char, index) => {
-        const totalChars = chars.length;
+      /* ===== STAGGERED TEXT COLOR ANIMATION ===== */
+      /* Each letter changes color at a slightly different time */
+      /* This creates the effect of color "flowing" left to right with the fill */
+      const chars = buttonText.querySelectorAll('.char'); /* Get all character spans */
+      chars.forEach((char, index) => {    /* Loop through each character */
+        const totalChars = chars.length;  /* Total number of characters */
+        /* Calculate when this character should start changing color */
+        /* First character (index 0): starts at 0ms delay */
+        /* Last character (index 11 for "Hold to Delete"): starts at ~1900ms delay */
         const delayPercent = (index / totalChars) * 100;
-        char.style.animation = `charColorChange 2000ms linear ${(delayPercent / 100) * 2000}ms forwards`;
+        const delayMs = (delayPercent / 100) * 2000; /* Convert percentage to milliseconds */
+        /* Apply staggered animation with custom delay */
+        /* charColorChange animation takes 2000ms total, but each char starts at different time */
+        char.style.animation = `charColorChange 2000ms linear ${delayMs}ms forwards`;
       });
 
-      // Check if held for full 2000ms
+      /* ===== SET TIMER FOR 2000MS HOLD ===== */
+      /* Timer checks if user held button for the full 2000ms duration */
       holdTimer = setTimeout(() => {
-        // Animation completed
-        console.log('Item deleted');
-      }, 2000);
+        console.log('Item deleted'); /* Console message (for debugging/verification) */
+        /* In a real app, this is where you'd trigger the actual delete action */
+      }, 2000); /* Wait 2000 milliseconds (2 seconds) */
     });
 
-    // Reset when mouse/touch up or leave
+    /* ===== HELPER FUNCTION — RESET BUTTON ===== */
+    /* This function runs when user releases the button */
+    /* It handles the reverse animations (fill shrinking, scale returning, colors resetting) */
     const resetButton = () => {
-      isHolding = false;
+      isHolding = false;                  /* No longer holding the button */
       if (holdTimer) {
-        clearTimeout(holdTimer);
+        clearTimeout(holdTimer);          /* Cancel the 2000ms timer if still running */
       }
-      holdDeleteBtn.classList.remove('pressed');
-      holdDeleteBtn.classList.add('released');
+      holdDeleteBtn.classList.remove('pressed'); /* Remove .pressed class → stops fill animation */
+      holdDeleteBtn.classList.add('released');   /* Add .released class → triggers reverse animations */
 
-      // Reset character colors with animation
-      const chars = buttonText.querySelectorAll('.char');
+      /* ===== RESET CHARACTER COLORS ===== */
+      const chars = buttonText.querySelectorAll('.char'); /* Get all character spans */
       chars.forEach(char => {
-        char.style.animation = 'none';
-        char.style.color = '#262626';
+        char.style.animation = 'none';    /* Stop current animation */
+        char.style.color = '#262626';     /* Reset color back to dark grey */
       });
 
-      // Remove released class after animation completes
+      /* ===== REMOVE RELEASED CLASS AFTER ANIMATION ===== */
+      /* The .released class triggers 300ms reverse animations */
+      /* After 300ms, remove this class to reset for the next press */
       setTimeout(() => {
-        holdDeleteBtn.classList.remove('released');
-      }, 300);
+        holdDeleteBtn.classList.remove('released'); /* Removes all .released animations */
+      }, 300); /* Wait for 300ms (animation duration) to complete */
     };
 
-    holdDeleteBtn.addEventListener('mouseup', resetButton);
-    holdDeleteBtn.addEventListener('mouseleave', resetButton);
-    holdDeleteBtn.addEventListener('touchend', resetButton);
+    /* ===== EVENT LISTENERS — TRIGGER RESET FUNCTION ===== */
+    /* These listen for when user releases the button in different ways */
+    holdDeleteBtn.addEventListener('mouseup', resetButton);      /* Mouse button released */
+    holdDeleteBtn.addEventListener('mouseleave', resetButton);   /* Mouse leaves button area */
+    holdDeleteBtn.addEventListener('touchend', resetButton);     /* Touch/finger lifted from screen */
   </script>
 </body>
 </html>
